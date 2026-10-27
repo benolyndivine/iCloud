@@ -20,12 +20,14 @@ import {
   Play,
   LayoutGrid,
   List,
-  ShieldCheck
+  ShieldCheck,
+  AlertTriangle
 } from 'lucide-react';
 import { auth } from '../services/firebase/firebaseClient';
 import { useAuth } from '../context/AuthContext';
 import { STORAGE_LIMIT_GB } from '../config';
 import { syncUserStorage, getUserStoredFiles, getCachedUserFiles, formatBytes } from '../services/firebase/backupService';
+import { isDirectAwsConfigured } from '../services/aws/directS3Service';
 import { extractThumbnailFromVideoUrl } from '../services/thumbnailService';
 import SmartImage from '../components/SmartImage';
 
@@ -226,6 +228,29 @@ export default function HomeScreen() {
 
   return (
     <div className="p-3 sm:p-5 space-y-6 pb-28 select-none">
+      {/* AWS S3 Configuration Prompt if environment variables missing on deployment */}
+      {!isDirectAwsConfigured() && (
+        <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 p-4 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm animate-in fade-in duration-200">
+          <div className="flex items-center space-x-3 min-w-0">
+            <div className="w-10 h-10 rounded-2xl bg-amber-100 dark:bg-amber-900/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+              <AlertTriangle size={20} />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-slate-900 dark:text-white">AWS S3 Credentials Required</h4>
+              <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+                Set <code className="bg-amber-100/80 dark:bg-amber-900/50 px-1 rounded text-amber-800 dark:text-amber-200 font-mono text-[11px]">VITE_AWS_ACCESS_KEY_ID</code> in Netlify Environment Variables, or enter your AWS keys in settings.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => navigate('/backup')}
+            className="px-4 py-2 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white text-xs font-bold rounded-xl shadow-md transition-all shrink-0 cursor-pointer text-center"
+          >
+            Configure Keys
+          </button>
+        </div>
+      )}
+
       {/* Top Section: Responsive Grid on Tablet / Desktop */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
         {/* Storage Overview Card - 50 GB Limit */}

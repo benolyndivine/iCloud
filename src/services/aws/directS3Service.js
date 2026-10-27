@@ -97,12 +97,20 @@ export function getDirectAwsConfig() {
     }
   } catch {}
 
+  const envAkid = import.meta.env.VITE_AWS_ACCESS_KEY_ID;
+  const envSak = import.meta.env.VITE_AWS_SECRET_ACCESS_KEY;
+
   return {
     region: import.meta.env.VITE_AWS_REGION || 'us-east-1',
-    accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID || '',
-    secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY || '',
+    accessKeyId: (envAkid && envAkid.trim()) ? envAkid.trim() : '',
+    secretAccessKey: (envSak && envSak.trim()) ? envSak.trim() : '',
     bucketName: import.meta.env.VITE_AWS_S3_BUCKET_NAME || 'icloud-android-storage-2026',
   };
+}
+
+export function isDirectAwsConfigured() {
+  const cfg = getDirectAwsConfig();
+  return Boolean(cfg.accessKeyId && cfg.secretAccessKey && cfg.bucketName);
 }
 
 // Module-level persistent presigned URL cache to avoid repeating expensive crypto signing
@@ -162,6 +170,12 @@ let lastConfigHash = '';
 
 export function getDirectS3Client() {
   const cfg = getDirectAwsConfig();
+  if (!cfg.accessKeyId || !cfg.secretAccessKey) {
+    throw new Error(
+      'AWS credentials missing. Please set VITE_AWS_ACCESS_KEY_ID and VITE_AWS_SECRET_ACCESS_KEY in Netlify Site Configuration, or configure your AWS keys in Cloud Backup settings.'
+    );
+  }
+
   const hash = `${cfg.region}:${cfg.accessKeyId}:${cfg.bucketName}`;
 
   if (cachedS3Client && lastConfigHash === hash) {
