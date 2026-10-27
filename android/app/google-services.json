@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "275506075212",
+    "project_id": "icloud-8bc82",
+    "storage_bucket": "icloud-8bc82.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:275506075212:android:163d2298e5f51e466c46e9",
+        "android_client_info": {
+          "package_name": "com.icloud.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "275506075212-hsd12ui08vngbsgmc9e1c0mquram2nuf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.icloud.app",
+            "certificate_hash": "813924b10d0d801dc81042366bf0b4ab54241228"
+          }
+        },
+        {
+          "client_id": "275506075212-ag30oucalghq5sna7vak7m76lo0ock43.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4XqN-Vby4LFRYb4lmI7LocY2ySZXhmQQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "275506075212-ag30oucalghq5sna7vak7m76lo0ock43.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

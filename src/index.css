@@ -1,0 +1,361 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Dynamic safe insets from native OS or CSS env */
+  --status-bar-height: max(var(--safe-area-inset-top, 0px), env(safe-area-inset-top, 0px));
+  --safe-bottom: max(var(--safe-area-inset-bottom, 0px), env(safe-area-inset-bottom, 0px));
+  --safe-left: max(var(--safe-area-inset-left, 0px), env(safe-area-inset-left, 0px));
+  --safe-right: max(var(--safe-area-inset-right, 0px), env(safe-area-inset-right, 0px));
+}
+
+/* On installed Android / iOS APK: Guarantee status bar never hits headers even before first layout */
+.capacitor-native {
+  --status-bar-height: max(var(--safe-area-inset-top, 0px), env(safe-area-inset-top, 0px), 40px);
+  --safe-bottom: max(var(--safe-area-inset-bottom, 0px), env(safe-area-inset-bottom, 0px), 16px);
+}
+
+@layer base {
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #050b14;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow: hidden;
+  }
+}
+
+.android-device-frame {
+  /* Default (phones / Android app): fill the whole screen, no fake phone frame */
+  width: 100%;
+  max-width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0;
+  background-color: #f8fafc;
+  background-image: var(--canvas);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Responsive Cross-Device Frame — adapts to all resolutions */
+@media (min-width: 768px) {
+  :root:not(.capacitor-native) {
+    --status-bar-height: 0px;
+    --safe-bottom: 0px;
+  }
+}
+
+/* Simulated Mobile / Tablet Preview frames (only when user actively selects a preview mode) */
+.device-simulation-mobile {
+  max-width: 420px !important;
+  height: 880px !important;
+  max-height: 94vh !important;
+  margin: auto !important;
+  border-radius: 44px !important;
+  border: 10px solid #1e293b !important;
+  box-shadow: 0 25px 70px -15px rgba(0, 0, 0, 0.6) !important;
+  overflow: hidden !important;
+}
+
+.device-simulation-tablet {
+  max-width: 820px !important;
+  height: 920px !important;
+  max-height: 94vh !important;
+  margin: auto !important;
+  border-radius: 32px !important;
+  border: 12px solid #1e293b !important;
+  box-shadow: 0 25px 70px -15px rgba(0, 0, 0, 0.6) !important;
+  overflow: hidden !important;
+}
+
+/* ==========================================
+   DESIGN SYSTEM — light + dark for every page
+   (pages keep their Tailwind classes; these rules restyle them)
+   ========================================== */
+.android-device-frame {
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.005em;
+}
+.dark .android-device-frame {
+  background-color: #090d16 !important;
+  color: #f1f5f9 !important;
+}
+
+/* Page entrance */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+.android-device-frame main > * { animation: pageIn .35s cubic-bezier(.2,.8,.2,1) backwards; }
+.android-device-frame main button { transition: transform .15s ease, background-color .2s ease, box-shadow .2s ease; }
+.android-device-frame main button:active { transform: scale(.97); }
+.android-device-frame :focus-visible { outline: 2px solid rgba(59,130,246,.6); outline-offset: 2px; }
+
+/* ---------- LIGHT: cards, hero gradients, buttons, inputs ---------- */
+.android-device-frame .bg-white[class*="rounded"] {
+  border-color: rgba(226,232,240,.7);
+  box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 10px 28px -14px rgba(30,58,138,.18);
+}
+.android-device-frame main [class*="bg-gradient-to"] {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.28), 0 18px 36px -14px rgba(37,99,235,.55);
+}
+.android-device-frame main [class*="bg-gradient-to"].no-glow,
+.android-device-frame [class*="bg-gradient-to"].no-glow,
+.no-glow {
+  box-shadow: none !important;
+}
+.android-device-frame main button.bg-blue-600,
+.android-device-frame main button.bg-indigo-600,
+.android-device-frame main button.bg-purple-600 {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 8px 18px -8px rgba(37,99,235,.6);
+}
+.android-device-frame input,
+.android-device-frame textarea,
+.android-device-frame select {
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  color: #0f172a;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.android-device-frame input:focus,
+.android-device-frame textarea:focus,
+.android-device-frame select:focus {
+  outline: none;
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 4px rgba(59,130,246,.18);
+}
+.android-device-frame input::placeholder,
+.android-device-frame textarea::placeholder { color: #94a3b8; }
+
+/* ---------- DARK ---------- */
+.dark .android-device-frame .bg-white {
+  background-color: #121a2c;
+  border-color: rgba(255,255,255,.07);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 12px 30px -14px rgba(0,0,0,.7);
+}
+.dark .android-device-frame .bg-slate-50 { background-color: rgba(255,255,255,.05); }
+.dark .android-device-frame .bg-slate-100,
+.dark .android-device-frame .bg-slate-200 { background-color: rgba(255,255,255,.09); }
+.dark .android-device-frame .hover\:bg-slate-50:hover { background-color: rgba(255,255,255,.07); }
+
+/* tinted icon / badge backgrounds */
+.dark .android-device-frame .bg-blue-50    { background-color: rgba(59,130,246,.16); }
+.dark .android-device-frame .bg-sky-50     { background-color: rgba(14,165,233,.16); }
+.dark .android-device-frame .bg-indigo-50  { background-color: rgba(99,102,241,.18); }
+.dark .android-device-frame .bg-purple-50  { background-color: rgba(168,85,247,.16); }
+.dark .android-device-frame .bg-emerald-50 { background-color: rgba(16,185,129,.15); }
+.dark .android-device-frame .bg-amber-50   { background-color: rgba(245,158,11,.15); }
+.dark .android-device-frame .bg-red-50,
+.dark .android-device-frame .bg-red-100    { background-color: rgba(239,68,68,.16); }
+
+/* borders */
+.dark .android-device-frame .border-slate-50,
+.dark .android-device-frame .border-slate-100 { border-color: rgba(255,255,255,.07); }
+.dark .android-device-frame .border-slate-200 { border-color: rgba(255,255,255,.12); }
+.dark .android-device-frame .border-indigo-100,
+.dark .android-device-frame .border-indigo-200 { border-color: rgba(129,140,248,.28); }
+
+/* text */
+.dark .android-device-frame .text-slate-900,
+.dark .android-device-frame .text-slate-800,
+.dark .android-device-frame .text-slate-700 { color: #f1f5f9; }
+.dark .android-device-frame .text-slate-600 { color: #cbd5e1; }
+.dark .android-device-frame .text-slate-500,
+.dark .android-device-frame .text-slate-400 { color: #94a3b8; }
+.dark .android-device-frame .text-blue-600,
+.dark .android-device-frame .text-blue-500 { color: #60a5fa; }
+.dark .android-device-frame .text-sky-600  { color: #38bdf8; }
+.dark .android-device-frame .text-indigo-600,
+.dark .android-device-frame .text-indigo-700,
+.dark .android-device-frame .text-indigo-900 { color: #a5b4fc; }
+.dark .android-device-frame .text-purple-600 { color: #c084fc; }
+.dark .android-device-frame .text-emerald-600,
+.dark .android-device-frame .text-emerald-500 { color: #34d399; }
+.dark .android-device-frame .text-amber-600,
+.dark .android-device-frame .text-amber-700 { color: #fbbf24; }
+.dark .android-device-frame .text-red-600 { color: #f87171; }
+
+/* colored shadows -> neutral deep shadows on dark */
+.dark .android-device-frame [class*="shadow-blue-"],
+.dark .android-device-frame [class*="shadow-indigo-"],
+.dark .android-device-frame [class*="shadow-purple-"],
+.dark .android-device-frame [class*="shadow-red-"] { --tw-shadow-color: rgba(0,0,0,.55) !important; }
+.dark .android-device-frame main [class*="bg-gradient-to"] {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 18px 40px -14px rgba(79,70,229,.55);
+}
+
+/* dark inputs */
+.dark .android-device-frame input,
+.dark .android-device-frame textarea,
+.dark .android-device-frame select {
+  background-color: rgba(255,255,255,.06);
+  border-color: rgba(255,255,255,.12);
+  color: #f1f5f9;
+}
+.dark .android-device-frame input:focus,
+.dark .android-device-frame textarea:focus,
+.dark .android-device-frame select:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 4px rgba(96,165,250,.22);
+}
+.dark .android-device-frame input::placeholder,
+.dark .android-device-frame textarea::placeholder { color: #64748b; }
+
+html:not(.dark), html:not(.dark) body { background-color: #dbe4f3; }
+
+/* Custom Scrollbars */
+.custom-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+.dark .custom-scroll::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+/* ==========================================
+   iOS GLASS (Header + Navbar) — follows the
+   Settings dark-mode toggle via the .dark class
+   ========================================== */
+:root {
+  /* Android edge-to-edge: status/navigation bar heights (0 on desktop) */
+  --sat: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --sab: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  --canvas: linear-gradient(165deg, #dbeafe 0%, #f8fafc 38%, #e0e7ff 100%);
+  --glass-bg: rgba(255, 255, 255, 0.62);
+  --glass-sheen: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.85);
+  --glass-hi: rgba(255, 255, 255, 1);
+  --glass-shadow: rgba(30, 58, 138, 0.22);
+  --glass-chip-bg: rgba(255, 255, 255, 0.7);
+  --glass-chip-hover: rgba(255, 255, 255, 0.95);
+  --glass-text: #0f172a;
+  --glass-icon: #334155;
+  --glass-muted: #64748b;
+  --glass-active: #2563eb;
+  --glass-active-bg: rgba(37, 99, 235, 0.12);
+  --glass-active-border: rgba(37, 99, 235, 0.28);
+  --glass-amber-bg: rgba(251, 191, 36, 0.2);
+  --glass-amber-text: #b45309;
+  --glass-amber-border: rgba(245, 158, 11, 0.4);
+}
+.dark {
+  --canvas: linear-gradient(165deg, #0b1226 0%, #090d16 45%, #150f2e 100%);
+  --glass-bg: rgba(30, 35, 52, 0.55);
+  --glass-sheen: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-hi: rgba(255, 255, 255, 0.18);
+  --glass-shadow: rgba(0, 0, 0, 0.7);
+  --glass-chip-bg: rgba(255, 255, 255, 0.1);
+  --glass-chip-hover: rgba(255, 255, 255, 0.18);
+  --glass-text: #f8fafc;
+  --glass-icon: #e2e8f0;
+  --glass-muted: #94a3b8;
+  --glass-active: #38bdf8;
+  --glass-active-bg: rgba(56, 189, 248, 0.16);
+  --glass-active-border: rgba(56, 189, 248, 0.3);
+  --glass-amber-bg: rgba(252, 211, 77, 0.12);
+  --glass-amber-text: #fcd34d;
+  --glass-amber-border: rgba(252, 211, 77, 0.25);
+}
+
+.glass {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  transition: background-color .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+.glass-header {
+  border-width: 0 0 1px 0;
+  box-shadow: inset 0 1px 0 var(--glass-hi), 0 8px 24px -12px var(--glass-shadow);
+}
+.glass-nav {
+  border-radius: 28px;
+  box-shadow: inset 0 1px 0 var(--glass-hi), 0 12px 32px -8px var(--glass-shadow);
+}
+.glass-sheen {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(to bottom, var(--glass-sheen), transparent 55%);
+}
+.glass-chip {
+  background: var(--glass-chip-bg);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 var(--glass-hi), 0 2px 8px -2px var(--glass-shadow);
+  color: var(--glass-icon);
+  transition: background-color .2s ease, transform .2s ease;
+}
+.glass-chip:hover { background: var(--glass-chip-hover); }
+.glass-chip:active { transform: scale(.9); }
+.glass-badge {
+  background: var(--glass-amber-bg);
+  color: var(--glass-amber-text);
+  border: 1px solid var(--glass-amber-border);
+}
+.glass-title { color: var(--glass-text); }
+.glass-tab { color: var(--glass-muted); transition: color .2s ease, transform .2s ease; }
+.glass-tab:active { transform: scale(.9); }
+.glass-tab[aria-current="page"] { color: var(--glass-active); }
+.glass-tab-pill {
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  background: var(--glass-active-bg);
+  border: 1px solid var(--glass-active-border);
+  box-shadow: inset 0 1px 0 var(--glass-hi);
+  opacity: 0;
+  transform: scale(.9);
+  transition: opacity .3s ease, transform .3s ease;
+}
+.glass-tab[aria-current="page"] .glass-tab-pill { opacity: 1; transform: scale(1); }
+
+/* ==========================================
+   EDGE-TO-EDGE — app draws behind the status bar
+   ========================================== */
+.glass-header {
+  padding-top: var(--sat);
+  height: calc(3.5rem + var(--sat));
+}
+.android-device-frame > main.pt-16 {
+  padding-top: calc(4rem + var(--sat));
+}
+.android-device-frame > main:not(.pt-16) {
+  padding-top: var(--sat);
+  padding-bottom: var(--sab);
+}
+.android-device-frame > .shrink-0.z-40 {
+  padding-bottom: calc(0.75rem + var(--sab));
+}
+
+/* Auth screens (Login / Register) have no <main>: push their content below the status bar */
+.android-device-frame:not(:has(> main)) {
+  padding-top: calc(1.5rem + var(--sat));
+  padding-bottom: calc(1.5rem + var(--sab));
+}
+.h-screen.p-6.flex-col {
+  padding-top: calc(1.5rem + var(--sat));
+  padding-bottom: calc(1.5rem + var(--sab));
+}
